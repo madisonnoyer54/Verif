@@ -2,6 +2,12 @@
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
 <nta>
 	<declaration>// Place global declarations here.
+ // Déclarations globales
+chan start_pliage, finish_pliage; // Synchronisation entre FileAttente et CartonPlier
+chan start_qualite, finish_qualite; // Synchronisation entre Usine et CartonQualite
+bool robot_mode; // Mode global : true = robot, false = humain
+int p_fail; // Probabilité d'échec
+
 </declaration>
 	<template>
 		<name>FileAttente</name>
@@ -25,90 +31,51 @@
 		</transition>
 	</template>
 	<template>
-		<name>Usine</name>
-		<location id="id5" x="-144" y="-42">
-			<name x="-154" y="-76">pliage</name>
-		</location>
-		<location id="id6" x="-8" y="-34">
-		</location>
-		<location id="id7" x="-8" y="-34">
-			<name x="-18" y="-68">controleQualite</name>
-		</location>
-		<location id="id8" x="178" y="-34">
-			<name x="161" y="-68">expedition</name>
-		</location>
-		<init ref="id5"/>
-		<transition id="id9">
-			<source ref="id7"/>
-			<target ref="id8"/>
-		</transition>
-		<transition id="id10">
-			<source ref="id6"/>
-			<target ref="id7"/>
-		</transition>
-		<transition id="id11">
-			<source ref="id6"/>
-			<target ref="id7"/>
-		</transition>
-		<transition id="id12">
-			<source ref="id7"/>
-			<target ref="id6"/>
-		</transition>
-		<transition id="id13">
-			<source ref="id6"/>
-			<target ref="id7"/>
-		</transition>
-		<transition id="id14">
-			<source ref="id5"/>
-			<target ref="id6"/>
-		</transition>
-	</template>
-	<template>
 		<name>CartonPlier</name>
 		<declaration>bool carton_plie; // LE carton plier true false sinon 
 clock x; // Horloge 
 //int p_fail; // Proba de pas reussir
 </declaration>
-		<location id="id15" x="-382" y="110">
+		<location id="id5" x="-382" y="110">
 			<name x="-392" y="76">Attend</name>
 		</location>
-		<location id="id16" x="-127" y="110">
+		<location id="id6" x="-127" y="110">
 			<name x="-137" y="76">Pliage</name>
-			<label kind="invariant" x="-246" y="136">(x &lt; 2) || ((x &lt; 4) &amp;&amp; (robot_mode!))</label>
+			<label kind="invariant" x="-246" y="136">(x &lt; 2) || ((x &lt; 4) &amp;&amp; (!robot_mode))</label>
 		</location>
-		<location id="id17" x="76" y="-144">
+		<location id="id7" x="76" y="-144">
 			<name x="66" y="-178">Succes</name>
 		</location>
-		<location id="id18" x="119" y="263">
+		<location id="id8" x="119" y="263">
 			<name x="109" y="229">Echec</name>
 		</location>
-		<location id="id19" x="399" y="34">
+		<location id="id9" x="399" y="34">
 			<name x="389" y="0">Liberer</name>
 		</location>
-		<init ref="id15"/>
-		<transition id="id20">
-			<source ref="id18"/>
-			<target ref="id19"/>
+		<init ref="id5"/>
+		<transition id="id10">
+			<source ref="id8"/>
+			<target ref="id9"/>
 			<label kind="synchronisation" x="229" y="195">carton_plie = false</label>
 		</transition>
-		<transition id="id21">
-			<source ref="id17"/>
-			<target ref="id19"/>
+		<transition id="id11">
+			<source ref="id7"/>
+			<target ref="id9"/>
 			<label kind="synchronisation" x="221" y="-93">carton_plie = true</label>
 		</transition>
-		<transition id="id22">
-			<source ref="id16"/>
-			<target ref="id18"/>
+		<transition id="id12">
+			<source ref="id6"/>
+			<target ref="id8"/>
 			<label kind="guard" x="-127" y="195">(x &gt;= 2) &amp;&amp; (random(100) &lt;= p_fail)</label>
 		</transition>
-		<transition id="id23">
-			<source ref="id16"/>
-			<target ref="id17"/>
+		<transition id="id13">
+			<source ref="id6"/>
+			<target ref="id7"/>
 			<label kind="guard" x="-221" y="-85">(x &gt;= 2) &amp;&amp; (random(100) &gt; p_fail)</label>
 		</transition>
-		<transition id="id24">
-			<source ref="id15"/>
-			<target ref="id16"/>
+		<transition id="id14">
+			<source ref="id5"/>
+			<target ref="id6"/>
 			<label kind="guard" x="-323" y="119">(robot_mode == true)</label>
 			<label kind="assignment" x="-289" y="68">p_fail = 5,
 x=0</label>
@@ -116,55 +83,51 @@ x=0</label>
 	</template>
 	<template>
 		<name>CartonQualite</name>
-		<location id="id25" x="-212" y="-8">
+		<location id="id15" x="-212" y="-8">
 			<name x="-222" y="-42">Attend</name>
 		</location>
-		<location id="id26" x="-59" y="-8">
+		<location id="id16" x="-59" y="-8">
 			<name x="-69" y="-42">Validation</name>
 		</location>
-		<location id="id27" x="85" y="-51">
+		<location id="id17" x="85" y="-51">
 			<name x="75" y="-85">Rejet</name>
 		</location>
-		<location id="id28" x="93" y="34">
+		<location id="id18" x="93" y="34">
 			<name x="83" y="0">Accaptation</name>
 		</location>
-		<location id="id29" x="187" y="-8">
+		<location id="id19" x="187" y="-8">
 			<name x="177" y="-42">Liberer</name>
 		</location>
-		<init ref="id25"/>
-		<transition id="id30">
-			<source ref="id27"/>
-			<target ref="id29"/>
+		<init ref="id15"/>
+		<transition id="id20">
+			<source ref="id17"/>
+			<target ref="id19"/>
 		</transition>
-		<transition id="id31">
-			<source ref="id28"/>
-			<target ref="id29"/>
+		<transition id="id21">
+			<source ref="id18"/>
+			<target ref="id19"/>
 		</transition>
-		<transition id="id32">
-			<source ref="id26"/>
-			<target ref="id28"/>
+		<transition id="id22">
+			<source ref="id16"/>
+			<target ref="id18"/>
 		</transition>
-		<transition id="id33">
-			<source ref="id26"/>
-			<target ref="id27"/>
+		<transition id="id23">
+			<source ref="id16"/>
+			<target ref="id17"/>
 		</transition>
-		<transition id="id34">
-			<source ref="id25"/>
-			<target ref="id26"/>
+		<transition id="id24">
+			<source ref="id15"/>
+			<target ref="id16"/>
 		</transition>
 	</template>
 	<system>// Place template instantiations here.
 
- // Déclarations globales
-chan start_pliage, finish_pliage; // Synchronisation entre FileAttente et CartonPlier
-chan start_qualite, finish_qualite; // Synchronisation entre Usine et CartonQualite
-bool robot_mode; // Mode global : true = robot, false = humain
-int p_fail; // Probabilité d'échec
 
+CartonPlier2 = CartonPlier();
+FileAttente2 = FileAttente();
+CartonQualite2 = CartonQualite();
 
-Process = CartonPlier();
-// List one or more processes to be composed into a system.
-system Process;
+system FileAttente2, CartonPlier2, CartonQualite2 ;
 </system>
 	<queries>
 		<query>
