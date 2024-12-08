@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+
+// Variables globales
+clock x_reception; // Temps pour réceptionner les cartons
+clock x_pliage;    // Temps pour plier un carton
+clock x_controle;  // Temps pour le contrôle qualité
+chan reception;    // Synchronisation pour réception des cartons
+chan pliage;       // Synchronisation pour démarrer le pliage
+chan fini_pliage;  // Signal de fin de pliage
+chan controle;     // Synchronisation pour le contrôle qualité
+chan empilage;     // Signal pour empiler les cartons validés
+bool carton_valide; // État du carton après contrôle
+int nb_cartons = 10; // Nombre total de cartons à traiter
+</declaration>
+	<template>
+		<name>Empilage</name>
+		<location id="id0" x="0" y="0">
+		</location>
+		<init ref="id0"/>
+	</template>
+	<template>
+		<name>ControleQualite</name>
+		<location id="id1" x="0" y="0">
+		</location>
+		<init ref="id1"/>
+	</template>
+	<template>
+		<name>Pliage</name>
+		<location id="id2" x="0" y="0">
+		</location>
+		<init ref="id2"/>
+	</template>
+	<template>
+		<name x="5" y="5">Reception</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id3" x="-450" y="-8">
+			<name x="-460" y="-42">En attente</name>
+		</location>
+		<location id="id4" x="-221" y="-8">
+			<name x="-229" y="-51">Reçu</name>
+			<label kind="invariant" x="-231" y="9">x_reception &gt;= 5</label>
+		</location>
+		<init ref="id3"/>
+		<transition id="id5">
+			<source ref="id4"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-322" y="-97">x_reception == 5</label>
+			<label kind="synchronisation" x="-322" y="-80">pliage!</label>
+			<nail x="-340" y="-119"/>
+		</transition>
+		<transition id="id6">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="-432" y="-25">reception?</label>
+			<label kind="assignment" x="-432" y="-8">x_reception :=0</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Process = Template();
+// List one or more processes to be composed into a system.
+system Process;
+</system>
+	<queries>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+	</queries>
+</nta>

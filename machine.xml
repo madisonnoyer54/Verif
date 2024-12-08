@@ -10,28 +10,34 @@ int p_fail; // Probabilité d'échec
 int total_cartons; // Nombre total de cartons dans la file d'att 
 </declaration>
 	<template>
+		<name>Main</name>
+		<location id="id0" x="0" y="0">
+		</location>
+		<init ref="id0"/>
+	</template>
+	<template>
 		<name>FileAttente</name>
 		<declaration>int nb_cartons = 0; // Nombre carton dans la file d'attend</declaration>
-		<location id="id0" x="-272" y="-34">
+		<location id="id1" x="-272" y="-34">
 			<name x="-282" y="-68">vide</name>
 		</location>
-		<location id="id1" x="-42" y="-34">
+		<location id="id2" x="-42" y="-34">
 			<name x="-52" y="-68">attente</name>
 			<label kind="invariant" x="-110" y="-110">nb_cartons &lt;= total_cartons</label>
 		</location>
-		<location id="id2" x="187" y="-34">
+		<location id="id3" x="187" y="-34">
 			<name x="177" y="-68">transfert</name>
 		</location>
-		<init ref="id0"/>
-		<transition id="id3">
-			<source ref="id1"/>
-			<target ref="id2"/>
+		<init ref="id1"/>
+		<transition id="id4">
+			<source ref="id2"/>
+			<target ref="id3"/>
 			<label kind="guard" x="-8" y="-34">nb_cartons &gt;= 0</label>
 			<label kind="synchronisation" x="0" y="-17">nb_cartons--</label>
 		</transition>
-		<transition id="id4">
-			<source ref="id0"/>
-			<target ref="id1"/>
+		<transition id="id5">
+			<source ref="id1"/>
+			<target ref="id2"/>
 			<label kind="assignment" x="-212" y="-25">nb_cartons++</label>
 		</transition>
 	</template>
@@ -41,46 +47,46 @@ int total_cartons; // Nombre total de cartons dans la file d'att
 clock x; // Horloge 
 //int p_fail; // Proba de pas reussir
 </declaration>
-		<location id="id5" x="-382" y="110">
-			<name x="-392" y="76">Attend</name>
+		<location id="id6" x="-348" y="110">
+			<name x="-358" y="76">Attend</name>
 		</location>
-		<location id="id6" x="-127" y="110">
+		<location id="id7" x="-127" y="110">
 			<name x="-137" y="76">Pliage</name>
 			<label kind="invariant" x="-246" y="136">(x &lt; 2) || ((x &lt; 4) &amp;&amp; (!robot_mode))</label>
 		</location>
-		<location id="id7" x="76" y="-144">
+		<location id="id8" x="76" y="-144">
 			<name x="66" y="-178">Succes</name>
 		</location>
-		<location id="id8" x="119" y="263">
+		<location id="id9" x="119" y="263">
 			<name x="109" y="229">Echec</name>
 		</location>
-		<location id="id9" x="399" y="34">
+		<location id="id10" x="399" y="34">
 			<name x="389" y="0">Liberer</name>
 		</location>
-		<init ref="id5"/>
-		<transition id="id10">
-			<source ref="id8"/>
-			<target ref="id9"/>
+		<init ref="id6"/>
+		<transition id="id11">
+			<source ref="id9"/>
+			<target ref="id10"/>
 			<label kind="synchronisation" x="229" y="195">carton_plie = false</label>
 		</transition>
-		<transition id="id11">
-			<source ref="id7"/>
-			<target ref="id9"/>
+		<transition id="id12">
+			<source ref="id8"/>
+			<target ref="id10"/>
 			<label kind="synchronisation" x="221" y="-93">carton_plie = true</label>
 		</transition>
-		<transition id="id12">
-			<source ref="id6"/>
-			<target ref="id8"/>
+		<transition id="id13">
+			<source ref="id7"/>
+			<target ref="id9"/>
 			<label kind="guard" x="-127" y="195">(x &gt;= 2) &amp;&amp; (random(100) &lt;= p_fail)</label>
 		</transition>
-		<transition id="id13">
-			<source ref="id6"/>
-			<target ref="id7"/>
+		<transition id="id14">
+			<source ref="id7"/>
+			<target ref="id8"/>
 			<label kind="guard" x="-221" y="-85">(x &gt;= 2) &amp;&amp; (random(100) &gt; p_fail)</label>
 		</transition>
-		<transition id="id14">
-			<source ref="id5"/>
-			<target ref="id6"/>
+		<transition id="id15">
+			<source ref="id6"/>
+			<target ref="id7"/>
 			<label kind="guard" x="-323" y="119">(robot_mode == true)</label>
 			<label kind="assignment" x="-289" y="68">p_fail = 5,
 x=0</label>
@@ -88,41 +94,41 @@ x=0</label>
 	</template>
 	<template>
 		<name>CartonQualite</name>
-		<location id="id15" x="-212" y="-8">
+		<location id="id16" x="-212" y="-8">
 			<name x="-222" y="-42">Attend</name>
 		</location>
-		<location id="id16" x="-59" y="-8">
+		<location id="id17" x="-59" y="-8">
 			<name x="-69" y="-42">Validation</name>
 		</location>
-		<location id="id17" x="85" y="-51">
+		<location id="id18" x="85" y="-51">
 			<name x="75" y="-85">Rejet</name>
 		</location>
-		<location id="id18" x="93" y="34">
+		<location id="id19" x="93" y="34">
 			<name x="83" y="0">Accaptation</name>
 		</location>
-		<location id="id19" x="187" y="-8">
+		<location id="id20" x="187" y="-8">
 			<name x="177" y="-42">Liberer</name>
 		</location>
-		<init ref="id15"/>
-		<transition id="id20">
+		<init ref="id16"/>
+		<transition id="id21">
+			<source ref="id18"/>
+			<target ref="id20"/>
+		</transition>
+		<transition id="id22">
+			<source ref="id19"/>
+			<target ref="id20"/>
+		</transition>
+		<transition id="id23">
 			<source ref="id17"/>
 			<target ref="id19"/>
 		</transition>
-		<transition id="id21">
-			<source ref="id18"/>
-			<target ref="id19"/>
-		</transition>
-		<transition id="id22">
-			<source ref="id16"/>
+		<transition id="id24">
+			<source ref="id17"/>
 			<target ref="id18"/>
 		</transition>
-		<transition id="id23">
+		<transition id="id25">
 			<source ref="id16"/>
 			<target ref="id17"/>
-		</transition>
-		<transition id="id24">
-			<source ref="id15"/>
-			<target ref="id16"/>
 		</transition>
 	</template>
 	<system>// Place template instantiations here.
