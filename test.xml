@@ -100,7 +100,6 @@ int nb_cartons = 10; // Nombre total de cartons à traiter
 		<transition id="id13">
 			<source ref="id10"/>
 			<target ref="id11"/>
-			<label kind="synchronisation" x="-432" y="-25">reception?</label>
 			<label kind="assignment" x="-432" y="-8">x_reception :=0</label>
 		</transition>
 	</template>
