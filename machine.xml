@@ -2,32 +2,37 @@
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
 <nta>
 	<declaration>// Place global declarations here.
+
+
  // Déclarations globales
-chan start_pliage, finish_pliage; // Synchronisation entre FileAttente et CartonPlier
-chan start_qualite, finish_qualite; // Synchronisation entre Usine et CartonQualite
 bool robot_mode; // Mode global : true = robot, false = humain
 int p_fail; // Probabilité d'échec
-
+int total_cartons; // Nombre total de cartons dans la file d'att 
 </declaration>
 	<template>
 		<name>FileAttente</name>
-		<location id="id0" x="-136" y="-25">
-			<name x="-146" y="-59">vide</name>
+		<declaration>int nb_cartons = 0; // Nombre carton dans la file d'attend</declaration>
+		<location id="id0" x="-272" y="-34">
+			<name x="-282" y="-68">vide</name>
 		</location>
 		<location id="id1" x="-42" y="-34">
 			<name x="-52" y="-68">attente</name>
+			<label kind="invariant" x="-110" y="-110">nb_cartons &lt;= total_cartons</label>
 		</location>
-		<location id="id2" x="76" y="-34">
-			<name x="66" y="-68">transfert</name>
+		<location id="id2" x="187" y="-34">
+			<name x="177" y="-68">transfert</name>
 		</location>
 		<init ref="id0"/>
 		<transition id="id3">
 			<source ref="id1"/>
 			<target ref="id2"/>
+			<label kind="guard" x="-8" y="-34">nb_cartons &gt;= 0</label>
+			<label kind="synchronisation" x="0" y="-17">nb_cartons--</label>
 		</transition>
 		<transition id="id4">
 			<source ref="id0"/>
 			<target ref="id1"/>
+			<label kind="assignment" x="-212" y="-25">nb_cartons++</label>
 		</transition>
 	</template>
 	<template>
