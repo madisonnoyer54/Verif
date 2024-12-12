@@ -7,23 +7,36 @@
 clock x_reception; // Temps pour réceptionner les cartons
 clock x_pliage;    // Temps pour plier un carton
 clock x_controle;  // Temps pour le contrôle qualité
+clock clock_globale;
 chan reception;    // Synchronisation pour réception des cartons
 chan pliage;       // Synchronisation pour démarrer le pliage
 chan fini_pliage;  // Signal de fin de pliage
 chan controle;     // Synchronisation pour le contrôle qualité
 chan empilage;     // Signal pour empiler les cartons validés
 bool carton_valide; // État du carton après contrôle
+int nb_cartons = 10; // Nombre total de cartons à traiter
+int UT = 0;
+int dommageMachine1 = 0;
+int[0,100] cartons = 0;
+chan endomagementM1; 
+chan endomagementM2; 
+chan endomagementM3; 
 int[0,10] nb_cartons = 10; // Nombre total de cartons à traiter
 </declaration>
 	<template>
 		<name>Empilage</name>
 		<location id="id0" x="-187" y="0">
-			<name x="-197" y="-34">EnAttente</name>
+			<name x="-144" y="-51">EnAttente</name>
 		</location>
 		<init ref="id0"/>
 		<transition id="id1">
 			<source ref="id0"/>
 			<target ref="id0"/>
+
+			<label kind="guard" x="-153" y="-93">cartons &lt; 100</label>
+			<label kind="synchronisation" x="-144" y="-110">empilage?</label>
+			<label kind="assignment" x="-153" y="-76">cartons += 1</label>
+
 			<label kind="guard" x="-204" y="-80">nb_cartons&gt;0</label>
 			<label kind="synchronisation" x="-204" y="-63">empilage?</label>
 			<label kind="assignment" x="-204" y="-46">nb_cartons--</label>
@@ -32,93 +45,116 @@ int[0,10] nb_cartons = 10; // Nombre total de cartons à traiter
 		</transition>
 	</template>
 	<template>
-		<name>ControleQualite</name>
+		<name>Pliage2</name>
 		<location id="id2" x="-221" y="-25">
-			<name x="-231" y="-59">EnAttente</name>
+			<name x="-187" y="-17">EnAttente</name>
 		</location>
 		<location id="id3" x="42" y="-25">
-			<name x="32" y="-59">Controle</name>
-			<label kind="invariant" x="32" y="-8">x_controle &gt;= 5</label>
+			<name x="59" y="-59">Controle</name>
+		</location>
+		<location id="id4" x="-221" y="-204">
 		</location>
 		<init ref="id2"/>
-		<transition id="id4">
-			<source ref="id3"/>
-			<target ref="id3"/>
-			<nail x="85" y="-25"/>
-		</transition>
 		<transition id="id5">
-			<source ref="id3"/>
+			<source ref="id4"/>
 			<target ref="id2"/>
-			<label kind="guard" x="-75" y="-114">x_controle == 5</label>
-			<label kind="synchronisation" x="-75" y="-97">empilage!</label>
-			<label kind="assignment" x="-75" y="-80">carton_valide := true</label>
-			<nail x="-93" y="-136"/>
 		</transition>
 		<transition id="id6">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-170" y="-272">x_controle &gt;= 5</label>
+			<label kind="synchronisation" x="-170" y="-255">empilage!</label>
+			<nail x="42" y="-204"/>
+		</transition>
+		<transition id="id7">
 			<source ref="id2"/>
 			<target ref="id3"/>
-			<label kind="synchronisation" x="-203" y="-42">fini_pliage?</label>
-			<label kind="assignment" x="-203" y="-25">x_controle := 0</label>
+			<label kind="synchronisation" x="-186" y="0">fini_pliage?</label>
+			<label kind="assignment" x="-186" y="17">x_controle := 0</label>
 		</transition>
 	</template>
 	<template>
 		<name>Pliage</name>
-		<location id="id7" x="-161" y="-8">
-			<name x="-171" y="-42">EnAttente</name>
+		<location id="id8" x="-161" y="-8">
+			<name x="-127" y="0">EnAttente</name>
 		</location>
-		<location id="id8" x="-17" y="-8">
-			<name x="-27" y="-42">EnCours</name>
+		<location id="id9" x="-17" y="-8">
+			<name x="-8" y="8">EnCours</name>
 		</location>
-		<init ref="id7"/>
-		<transition id="id9">
-			<source ref="id8"/>
-			<target ref="id7"/>
-			<label kind="guard" x="-67" y="-89">x_pliage == 10</label>
-			<label kind="synchronisation" x="-67" y="-72">fini_pliage!</label>
-			<nail x="-85" y="-102"/>
-		</transition>
-		<transition id="id10">
-			<source ref="id7"/>
+		<location id="id10" x="-161" y="-255">
+		</location>
+		<location id="id11" x="-348" y="-136">
+		</location>
+		<init ref="id8"/>
+		<transition id="id12">
+			<source ref="id11"/>
 			<target ref="id8"/>
-			<label kind="synchronisation" x="-143" y="-25">pliage?</label>
-			<label kind="assignment" x="-143" y="-8">x_pliage:=0</label>
+			<label kind="guard" x="-382" y="-59">x_pliage &gt;= 110</label>
+		</transition>
+		<transition id="id13">
+			<source ref="id10"/>
+			<target ref="id11"/>
+			<label kind="guard" x="-399" y="-255">dommageMachine1 == 17</label>
+			<label kind="assignment" x="-391" y="-238">dommageMachine1 = 0</label>
+		</transition>
+		<transition id="id14">
+			<source ref="id10"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-297" y="-153">dommageMachine1 &lt; 17</label>
+			<label kind="assignment" x="-289" y="-136">dommageMachine1 += 1</label>
+		</transition>
+		<transition id="id15">
+			<source ref="id9"/>
+			<target ref="id10"/>
+			<label kind="guard" x="-42" y="-221">x_pliage &gt;= 10</label>
+			<label kind="synchronisation" x="-34" y="-204">fini_pliage!</label>
+			<nail x="-17" y="-136"/>
+			<nail x="-119" y="-255"/>
+		</transition>
+		<transition id="id16">
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-119" y="17">pliage?</label>
+			<label kind="assignment" x="-144" y="34">x_pliage:=0</label>
 		</transition>
 	</template>
 	<template>
 		<name x="5" y="5">Reception</name>
 		<declaration>// Place local declarations here.
 </declaration>
-		<location id="id11" x="-450" y="-8">
-			<name x="-460" y="-42">EnAttente</name>
+		<location id="id17" x="-450" y="-8">
+			<name x="-527" y="-59">EnAttente</name>
 		</location>
-		<location id="id12" x="-221" y="-8">
+		<location id="id18" x="-212" y="-8">
 			<name x="-229" y="-51">Recu</name>
-			<label kind="invariant" x="-231" y="9">x_reception &lt;= 5</label>
 		</location>
-		<init ref="id11"/>
-		<transition id="id13">
-			<source ref="id12"/>
-			<target ref="id12"/>
-			<nail x="-187" y="-8"/>
+		<init ref="id17"/>
+		<transition id="id19">
+			<source ref="id17"/>
+			<target ref="id17"/>
+			<label kind="guard" x="-535" y="59">cartons &gt;= 100</label>
+			<nail x="-510" y="-8"/>
+			<nail x="-476" y="51"/>
 		</transition>
-		<transition id="id14">
-			<source ref="id12"/>
-			<target ref="id11"/>
-			<label kind="guard" x="-322" y="-97">x_reception == 5</label>
-			<label kind="synchronisation" x="-322" y="-80">pliage!</label>
+		<transition id="id20">
+			<source ref="id18"/>
+			<target ref="id17"/>
+			<label kind="guard" x="-399" y="-161">x_reception &gt;= 5</label>
+			<label kind="synchronisation" x="-365" y="-144">pliage!</label>
 			<nail x="-340" y="-119"/>
 		</transition>
-		<transition id="id15">
-			<source ref="id11"/>
-			<target ref="id12"/>
-			<label kind="assignment" x="-432" y="-8">x_reception :=0</label>
+		<transition id="id21">
+			<source ref="id17"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-391" y="8">cartons &lt; 100</label>
+			<label kind="assignment" x="-399" y="-8">x_reception :=0</label>
 		</transition>
 	</template>
 	<system>// Place template instantiations here.
 
 ReceptionAutomate = Reception();
 PliageAutomate = Pliage();
-ControleAutomate = ControleQualite();
+ControleAutomate = Pliage2();
 EmpilageAutomate = Empilage();
 
 // List one or more processes to be composed into a system.
@@ -126,14 +162,34 @@ system ReceptionAutomate, PliageAutomate, ControleAutomate, EmpilageAutomate;
 </system>
 	<queries>
 		<query>
-			<formula/>
-			<comment/>
-		</query>
-		<query>
 			<formula>A[] not deadlock
 </formula>
 			<comment/>
 			<result outcome="success" type="quality" timestamp="2024-12-10 14:06:36 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; (cartons == 15 &amp;&amp; clock_globale &lt; 210)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2024-12-11 19:04:56 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; (cartons == 30 &amp;&amp; clock_globale &lt; 420)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2024-12-11 19:05:01 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; (cartons == 45 &amp;&amp; clock_globale &lt; 630)</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2024-12-11 19:05:08 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; (cartons == 60 &amp;&amp; clock_globale &lt; 840)</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2024-12-11 19:05:35 +0100">
 			</result>
 		</query>
 	</queries>
