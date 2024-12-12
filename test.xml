@@ -13,7 +13,7 @@ chan fini_pliage;  // Signal de fin de pliage
 chan controle;     // Synchronisation pour le contrôle qualité
 chan empilage;     // Signal pour empiler les cartons validés
 bool carton_valide; // État du carton après contrôle
-int nb_cartons = 10; // Nombre total de cartons à traiter
+int[0,10] nb_cartons = 10; // Nombre total de cartons à traiter
 </declaration>
 	<template>
 		<name>Empilage</name>
@@ -24,6 +24,7 @@ int nb_cartons = 10; // Nombre total de cartons à traiter
 		<transition id="id1">
 			<source ref="id0"/>
 			<target ref="id0"/>
+			<label kind="guard" x="-204" y="-80">nb_cartons&gt;0</label>
 			<label kind="synchronisation" x="-204" y="-63">empilage?</label>
 			<label kind="assignment" x="-204" y="-46">nb_cartons--</label>
 			<nail x="-221" y="-93"/>
@@ -132,6 +133,8 @@ system ReceptionAutomate, PliageAutomate, ControleAutomate, EmpilageAutomate;
 			<formula>A[] not deadlock
 </formula>
 			<comment/>
+			<result outcome="success" type="quality" timestamp="2024-12-10 14:06:36 +0100">
+			</result>
 		</query>
 	</queries>
 </nta>
